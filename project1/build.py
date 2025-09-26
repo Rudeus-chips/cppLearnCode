@@ -67,7 +67,7 @@ def main():
     
     # 获取项目根目录
     project_root = Path(__file__).parent.absolute()
-    build_dir = project_root / "output"
+    build_dir = project_root / "build"
     
     # 清理选项
     if args.clean and build_dir.exists():
@@ -111,7 +111,7 @@ def main():
     
     print(f"构建成功完成! 配置: {args.config}")
     print(f"日志已保存到: {log_file}")
-    
+
 
 if __name__ == "__main__":
     main()

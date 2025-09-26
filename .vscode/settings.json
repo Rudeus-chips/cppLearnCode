@@ -14,6 +14,20 @@
     ],
     "workbench.editor.wrapTabs": true,
 
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "args": ["-NoProfile", "-ExecutionPolicy", "Bypass"],
+            "env": {
+                "PATH": "${env:PATH};D:\\software\\cmake-4.1.1\\bin",
+                "NODE_ENV": "development"
+            },
+        }
+    },
+    "terminal.integrated.cwd": "${workspaceFolder}",
+    "terminal.integrated.detectLocale": "on",
+
     "files.associations": {
         "array": "cpp",
         "atomic": "cpp",
