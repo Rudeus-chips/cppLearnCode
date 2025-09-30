@@ -3,15 +3,15 @@
 
 class Button {
 public:
-    using ClickCallback = std::function<void()>;  // 定义回调类型
+    using ClickCallback = std::function<void()>;  // ??????????
 
     void set_click_callback(ClickCallback cb) {
-        click_cb_ = std::move(cb);  // 存储回调
+        click_cb_ = std::move(cb);  // ?洢???
     }
 
-    void click() {  // 模拟按钮点击事件
+    void click() {  // ??????????
         if (click_cb_) {
-            click_cb_();  // 触发回调
+            click_cb_();  // ???????
         }
     }
 
@@ -22,12 +22,12 @@ private:
 int main() {
     Button btn;
 
-    // 使用 Lambda 作为回调
+    // ??? Lambda ??????
     btn.set_click_callback([]() {
         std::cout << "Button clicked!" << std::endl;
     });
 
-    btn.click();  // 输出：Button clicked!
+    btn.click();  // ?????Button clicked!
 
     return 0;
 }

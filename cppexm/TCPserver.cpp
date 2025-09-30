@@ -58,7 +58,7 @@ int main() {
     // 获取客户端IP
     char clientIP[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &clientAddr.sin_addr, clientIP, INET_ADDRSTRLEN);
-    std::cout << "客户端已连接，IP地址: " << clientIP << std::endl;
+    std::cout << "客户端已连接, IP地址: " << clientIP << std::endl;
 
     // 6. 接收客户端数据
     char recvBuffer[1024];
@@ -70,8 +70,8 @@ int main() {
         std::cout << "接收到 " << recvBytes << " 字节数据: " << recvBuffer << std::endl;
         
         // 7. 可选：发送响应
-        const char* response = "服务器已收到你的消息!";
-        send(clientSocket, response, strlen(response), 0);
+        // const char* response = "服务器已收到你的消息!";
+        // send(clientSocket, response, strlen(response), 0);
         
         // 如果只想接收一次消息，可以在此处break
         // break;

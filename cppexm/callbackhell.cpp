@@ -4,56 +4,56 @@
 #include <functional>
 #include <stdexcept>
 
-// ¶¨Òå»Øµ÷º¯ÊıÀàĞÍ£º²ÎÊıÎª¶ÁÈ¡µÄ×Ö½ÚÊıºÍÊı¾İ»º³åÇø£¨nullptr±íÊ¾Ê§°Ü£©
+// å®šä¹‰å›è°ƒå‡½æ•°ç±»å‹ï¼šå‚æ•°ä¸ºè¯»å–çš„å­—èŠ‚æ•°å’Œæ•°æ®ç¼“å†²åŒºï¼ˆnullptrè¡¨ç¤ºå¤±è´¥ï¼‰
 using ReadCallback = std::function<void(size_t bytes_read, const char* buffer)>;
 
 /**
- * @brief Òì²½¶ÁÈ¡ÎÄ¼şµÄº¯Êı£¨´«Í³»Øµ÷·½Ê½£©
- * @param filename ÎÄ¼şÃû
- * @param callback ¶ÁÈ¡Íê³Éºóµ÷ÓÃµÄ»Øµ÷º¯Êı
+ * @brief å¼‚æ­¥è¯»å–æ–‡ä»¶çš„å‡½æ•°ï¼ˆä¼ ç»Ÿå›è°ƒæ–¹å¼ï¼‰
+ * @param filename æ–‡ä»¶å
+ * @param callback è¯»å–å®Œæˆåè°ƒç”¨çš„å›è°ƒå‡½æ•°
  */
 void async_read_file_traditional(const std::string& filename, ReadCallback callback) {
-    // Æô¶¯Ò»¸öĞÂÏß³ÌÖ´ĞĞÊµ¼ÊµÄÎÄ¼ş¶ÁÈ¡²Ù×÷£¨Ä£ÄâÒì²½£©
+    // å¯åŠ¨ä¸€ä¸ªæ–°çº¿ç¨‹æ‰§è¡Œå®é™…çš„æ–‡ä»¶è¯»å–æ“ä½œï¼ˆæ¨¡æ‹Ÿå¼‚æ­¥ï¼‰
     std::thread([filename, callback]() {
         try {
             std::ifstream file(filename, std::ios::binary);
             if (!file.is_open()) {
-                // ¶ÁÈ¡Ê§°ÜÊ±£¬Í¨¹ı»Øµ÷´«µİ0×Ö½ÚºÍnullptr
+                // è¯»å–å¤±è´¥æ—¶ï¼Œé€šè¿‡å›è°ƒä¼ é€’0å­—èŠ‚å’Œnullptr
                 callback(0, nullptr);
                 return;
             }
 
-            char buffer[1024]; // ¶ÁÈ¡»º³åÇø£¨¹Ì¶¨´óĞ¡£©
-            file.read(buffer, sizeof(buffer)); // Í¬²½¶ÁÈ¡£¨Êµ¼ÊÒì²½Ó¦Ê¹ÓÃ·Ç×èÈûAPI£©
-            size_t bytes_read = file.gcount(); // »ñÈ¡Êµ¼Ê¶ÁÈ¡µÄ×Ö½ÚÊı
+            char buffer[1024]; // è¯»å–ç¼“å†²åŒºï¼ˆå›ºå®šå¤§å°ï¼‰
+            file.read(buffer, sizeof(buffer)); // åŒæ­¥è¯»å–ï¼ˆå®é™…å¼‚æ­¥åº”ä½¿ç”¨éé˜»å¡APIï¼‰
+            size_t bytes_read = file.gcount(); // è·å–å®é™…è¯»å–çš„å­—èŠ‚æ•°
 
-            // ¶ÁÈ¡Íê³Éºó£¬µ÷ÓÃ»Øµ÷º¯Êı´«µİ½á¹û
+            // è¯»å–å®Œæˆåï¼Œè°ƒç”¨å›è°ƒå‡½æ•°ä¼ é€’ç»“æœ
             callback(bytes_read, buffer);
         } catch (const std::exception& e) {
-            // Òì³£Ê±Í¨¹ı»Øµ÷´«µİ´íÎóĞÅÏ¢£¨´Ë´¦¼ò»¯Îª0×Ö½Ú£©
+            // å¼‚å¸¸æ—¶é€šè¿‡å›è°ƒä¼ é€’é”™è¯¯ä¿¡æ¯ï¼ˆæ­¤å¤„ç®€åŒ–ä¸º0å­—èŠ‚ï¼‰
             callback(0, nullptr);
         }
-    }).detach(); // ·ÖÀëÏß³Ì£¬²»×èÈûµ±Ç°Ïß³Ì
+    }).detach(); // åˆ†ç¦»çº¿ç¨‹ï¼Œä¸é˜»å¡å½“å‰çº¿ç¨‹
 }
 
 int main() {
-    // µ÷ÓÃ´«Í³Òì²½¶ÁÈ¡º¯Êı£¬´«Èë»Øµ÷´¦Àí½á¹û
+    // è°ƒç”¨ä¼ ç»Ÿå¼‚æ­¥è¯»å–å‡½æ•°ï¼Œä¼ å…¥å›è°ƒå¤„ç†ç»“æœ
     async_read_file_traditional("example.txt", 
         [](size_t bytes_read, const char* buffer) {
             if (bytes_read == 0) {
                 std::cerr << "Error: Failed to read file or empty file." << std::endl;
                 return;
             }
-            std::cout << "´«Í³Òì²½¶ÁÈ¡½á¹û£¨" << bytes_read << "×Ö½Ú£©: " << std::endl;
-            std::cout.write(buffer, bytes_read); // Êä³ö¶ÁÈ¡µÄÊı¾İ
+            std::cout << "ä¼ ç»Ÿå¼‚æ­¥è¯»å–ç»“æœï¼ˆ" << bytes_read << "å­—èŠ‚ï¼‰: " << std::endl;
+            std::cout.write(buffer, bytes_read); // è¾“å‡ºè¯»å–çš„æ•°æ®
             std::cout << std::endl;
         });
 
-    // Ö÷Ïß³Ì¼ÌĞøÖ´ĞĞÆäËû²Ù×÷£¨²»×èÈû£©
-    std::cout << "Ö÷Ïß³Ì¼ÌĞøÔËĞĞ..." << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(2)); // Ä£ÄâÖ÷Ïß³Ì¼ÌĞøÖ´ĞĞ
-    std::cout << "Ö÷Ïß³Ì¼ÌĞøÔËĞĞ2" << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(1)); // µÈ´ıÒì²½²Ù×÷Íê³É
+    // ä¸»çº¿ç¨‹ç»§ç»­æ‰§è¡Œå…¶ä»–æ“ä½œï¼ˆä¸é˜»å¡ï¼‰
+    std::cout << "ä¸»çº¿ç¨‹ç»§ç»­è¿è¡Œ..." << std::endl;
+    std::this_thread::sleep_for(std::chrono::seconds(2)); // æ¨¡æ‹Ÿä¸»çº¿ç¨‹ç»§ç»­æ‰§è¡Œ
+    std::cout << "ä¸»çº¿ç¨‹ç»§ç»­è¿è¡Œ2" << std::endl;
+    std::this_thread::sleep_for(std::chrono::seconds(1)); // ç­‰å¾…å¼‚æ­¥æ“ä½œå®Œæˆ
 
     return 0;
 }

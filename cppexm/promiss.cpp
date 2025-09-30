@@ -4,74 +4,74 @@
 #include <condition_variable>
 #include <queue>
 #include <chrono>
-#include <atomic>  // ĞÂÔö£ºÔ­×Ó±äÁ¿ÓÃÓÚÖÕÖ¹±êÖ¾
+#include <atomic>  // æ–°å¢ï¼šåŸå­å˜é‡ç”¨äºç»ˆæ­¢æ ‡å¿—
 
 std::mutex mtx;
 std::condition_variable cv;
-std::queue<int> data_queue;  // ¹²Ïí¶ÓÁĞ
-std::atomic<bool> stop(false);  // ÖÕÖ¹±êÖ¾£¨Ô­×Ó²Ù×÷±£Ö¤Ïß³Ì°²È«£©
+std::queue<int> data_queue;  // å…±äº«é˜Ÿåˆ—
+std::atomic<bool> stop(false);  // ç»ˆæ­¢æ ‡å¿—ï¼ˆåŸå­æ“ä½œä¿è¯çº¿ç¨‹å®‰å…¨ï¼‰
 
-// Ïû·ÑÕßÏß³Ì£ºµÈ´ı¶ÓÁĞ·Ç¿Õ²¢Ïû·ÑÊı¾İ£¨Ö§³ÖÓÅÑÅÖÕÖ¹£©
+// æ¶ˆè´¹è€…çº¿ç¨‹ï¼šç­‰å¾…é˜Ÿåˆ—éç©ºå¹¶æ¶ˆè´¹æ•°æ®ï¼ˆæ”¯æŒä¼˜é›…ç»ˆæ­¢ï¼‰
 void consumer() {
-    while (!stop) {  // Ñ­»·Ìõ¼ş£ºÎ´ÊÕµ½ÖÕÖ¹ĞÅºÅ
+    while (!stop) {  // å¾ªç¯æ¡ä»¶ï¼šæœªæ”¶åˆ°ç»ˆæ­¢ä¿¡å·
         std::unique_lock<std::mutex> lock(mtx);
-        // µÈ´ıÌõ¼ş£º¶ÓÁĞ·Ç¿Õ »ò ÊÕµ½ÖÕÖ¹ĞÅºÅ£¨±ÜÃâĞé¼Ù»½ĞÑ£©
+        // ç­‰å¾…æ¡ä»¶ï¼šé˜Ÿåˆ—éç©º æˆ– æ”¶åˆ°ç»ˆæ­¢ä¿¡å·ï¼ˆé¿å…è™šå‡å”¤é†’ï¼‰
         cv.wait(lock, []{ 
             return !data_queue.empty() || stop; 
         });  
 
-        // ÈôÊÕµ½ÖÕÖ¹ĞÅºÅÇÒ¶ÓÁĞÎª¿Õ£¬ÍË³öÑ­»·
+        // è‹¥æ”¶åˆ°ç»ˆæ­¢ä¿¡å·ä¸”é˜Ÿåˆ—ä¸ºç©ºï¼Œé€€å‡ºå¾ªç¯
         if (stop && data_queue.empty()) {
             break;
         }
 
-        // Ïû·ÑÊı¾İ£¨½öµ±¶ÓÁĞ·Ç¿ÕÊ±£©
+        // æ¶ˆè´¹æ•°æ®ï¼ˆä»…å½“é˜Ÿåˆ—éç©ºæ—¶ï¼‰
         if (!data_queue.empty()) {
             int data = data_queue.front();
             data_queue.pop();
-            std::cout << "Ïû·ÑÕßÏû·ÑÊı¾İ£º" << data << std::endl;
+            std::cout << "æ¶ˆè´¹è€…æ¶ˆè´¹æ•°æ®ï¼š" << data << std::endl;
         }
 
-        // lock.unlock();  // ÌáÇ°ÊÍ·ÅËø£¨¿ÉÑ¡£¬×÷ÓÃÓò½áÊø×Ô¶¯ÊÍ·Å£©
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));  // Ä£ÄâÏû·ÑºÄÊ±
+        // lock.unlock();  // æå‰é‡Šæ”¾é”ï¼ˆå¯é€‰ï¼Œä½œç”¨åŸŸç»“æŸè‡ªåŠ¨é‡Šæ”¾ï¼‰
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));  // æ¨¡æ‹Ÿæ¶ˆè´¹è€—æ—¶
     }
-    std::cout << "Ïû·ÑÕßÏß³ÌÍË³ö" << std::endl;
+    std::cout << "æ¶ˆè´¹è€…çº¿ç¨‹é€€å‡º" << std::endl;
 }
 
-// Éú²úÕßÏß³Ì£ºÏò¶ÓÁĞÖĞÌí¼ÓÊı¾İ£¨¹Ì¶¨Éú²ú 5 ´Îºó½áÊø£©
+// ç”Ÿäº§è€…çº¿ç¨‹ï¼šå‘é˜Ÿåˆ—ä¸­æ·»åŠ æ•°æ®ï¼ˆå›ºå®šç”Ÿäº§ 5 æ¬¡åç»“æŸï¼‰
 void producer(int id) {
     for (int i = 0; i < 5; ++i) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));  // Ä£ÄâÉú²úºÄÊ±
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));  // æ¨¡æ‹Ÿç”Ÿäº§è€—æ—¶
         int data = id * 100 + i;
 
         std::lock_guard<std::mutex> lock(mtx);
         data_queue.push(data);
-        std::cout << "Éú²úÕß " << id << " Éú²úÊı¾İ£º" << data << std::endl;
-        cv.notify_one();  // ¹Ø¼ü¸Ä½ø£ºÉú²úºóÍ¨ÖªÏû·ÑÕß£¨±ÜÃâÏû·ÑÕßÎŞÏŞµÈ´ı£©
+        std::cout << "ç”Ÿäº§è€… " << id << " ç”Ÿäº§æ•°æ®ï¼š" << data << std::endl;
+        cv.notify_one();  // å…³é”®æ”¹è¿›ï¼šç”Ÿäº§åé€šçŸ¥æ¶ˆè´¹è€…ï¼ˆé¿å…æ¶ˆè´¹è€…æ— é™ç­‰å¾…ï¼‰
     }
-    std::cout << "Éú²úÕß " << id << " ½áÊøÉú²ú" << std::endl;
+    std::cout << "ç”Ÿäº§è€… " << id << " ç»“æŸç”Ÿäº§" << std::endl;
     
 }
 
 int main() {
-    // Æô¶¯Ïû·ÑÕßÏß³Ì
+    // å¯åŠ¨æ¶ˆè´¹è€…çº¿ç¨‹
     std::thread consumer_thread(consumer);
 
-    // Æô¶¯ 2 ¸öÉú²úÕßÏß³Ì
+    // å¯åŠ¨ 2 ä¸ªç”Ÿäº§è€…çº¿ç¨‹
     std::thread producer1(producer, 1);
     std::thread producer2(producer, 2);
 
-    // µÈ´ıÉú²úÕß½áÊø
+    // ç­‰å¾…ç”Ÿäº§è€…ç»“æŸ
     producer1.join();
     producer2.join();
 
-    // Éú²úÕß½áÊøºó£¬Í¨ÖªÏû·ÑÕßÍ£Ö¹²¢µÈ´ıÆäÍË³ö
-    stop = true;  // ÉèÖÃÖÕÖ¹±êÖ¾
-    cv.notify_one();  // »½ĞÑÏû·ÑÕß£¨¿ÉÄÜ×èÈûÔÚ wait ´¦£©
+    // ç”Ÿäº§è€…ç»“æŸåï¼Œé€šçŸ¥æ¶ˆè´¹è€…åœæ­¢å¹¶ç­‰å¾…å…¶é€€å‡º
+    stop = true;  // è®¾ç½®ç»ˆæ­¢æ ‡å¿—
+    cv.notify_one();  // å”¤é†’æ¶ˆè´¹è€…ï¼ˆå¯èƒ½é˜»å¡åœ¨ wait å¤„ï¼‰
 
-    // µÈ´ıÏû·ÑÕßÏß³ÌÓÅÑÅÍË³ö£¨Ìæ´ú detach()£©
+    // ç­‰å¾…æ¶ˆè´¹è€…çº¿ç¨‹ä¼˜é›…é€€å‡ºï¼ˆæ›¿ä»£ detach()ï¼‰
     consumer_thread.join();
 
-    std::cout << "ËùÓĞÏß³Ì½áÊø£¬³ÌĞòÍË³ö" << std::endl;
+    std::cout << "æ‰€æœ‰çº¿ç¨‹ç»“æŸï¼Œç¨‹åºé€€å‡º" << std::endl;
     return 0;
 }
