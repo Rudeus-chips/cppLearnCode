@@ -1,6 +1,6 @@
 #include <iostream>
 #include <memory>
-#include <cassert>
+// #include <cassert>
 
 template<typename T>
 class SmartPointer {
@@ -63,6 +63,7 @@ public:
             delete this->_ptr;
             delete this->_count;
         }
+        std::cout << "delete" << std::endl;
     }
 
     T& get() {
@@ -80,18 +81,22 @@ public:
     }
 };
 
-int main() {
+int main()
+{
     {
+
         SmartPointer<int> sp(new int(10));
         SmartPointer<int> sp2(sp);
         SmartPointer<int> sp3(new int(20));
+        std::cout << sp.use_count() << std::endl;
+        std::cout << sp3.use_count() << std::endl;
         sp2 = sp3;
         std::cout << sp.use_count() << std::endl;
         std::cout << sp3.use_count() << std::endl;
         std::cout << sp.get() << std::endl;
         sp.get() = 20;
     }
-    //delete operator
+    // delete operator
 }
 
 // g++ .\smartpointer.cpp -o smartpointer -std=c++23 -lws2_32  

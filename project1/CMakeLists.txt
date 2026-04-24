@@ -1,5 +1,7 @@
 # 设置 CMake 最低版本
 cmake_minimum_required(VERSION 3.10)
+# 设置构建工具为MinGW
+set(CMAKE_GENERATOR "MinGW Makefiles" CACHE INTERNAL "Build Tool")
 
 # 设置项目名称和版本
 project(MyProject VERSION 1.0)
@@ -19,6 +21,7 @@ set(SOURCES
 
 # 生成可执行文件
 add_executable(MyProject ${SOURCES})
+
 
 # build 中
 # cd .\build

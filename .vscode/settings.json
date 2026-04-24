@@ -127,6 +127,8 @@
         "valarray": "cpp",
         "stdio.h": "c",
         "queue": "cpp",
-        "stack": "cpp"
-    }
+        "stack": "cpp",
+        "cassert": "cpp"
+    },
+    "cmake.sourceDirectory": "D:/code/project1"
 }
